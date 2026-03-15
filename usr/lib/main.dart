@@ -10,351 +10,310 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Research Poster',
+      title: 'Research Presentation',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0D47A1)), // Dark Blue theme
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1565C0)),
         useMaterial3: true,
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const PosterScreen(),
+        '/': (context) => const PresentationScreen(),
       },
     );
   }
 }
 
-class PosterScreen extends StatelessWidget {
-  const PosterScreen({super.key});
+class PresentationScreen extends StatefulWidget {
+  const PresentationScreen({super.key});
+
+  @override
+  State<PresentationScreen> createState() => _PresentationScreenState();
+}
+
+class _PresentationScreenState extends State<PresentationScreen> {
+  final PageController _pageController = PageController();
+  int _currentPage = 0;
+  final int _totalPages = 5;
+
+  void _nextPage() {
+    if (_currentPage < _totalPages - 1) {
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _prevPage() {
+    if (_currentPage > 0) {
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[200],
-      appBar: AppBar(
-        title: const Text('Digital Research Poster'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.zoom_in),
-            tooltip: 'Zoom In',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Pinch or scroll to zoom in the interactive viewer!')),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.download),
-            tooltip: 'Export Poster',
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Export to PDF functionality coming soon!')),
-              );
-            },
-          )
-        ],
-      ),
-      // InteractiveViewer allows panning and zooming around the large poster
-      body: Center(
-        child: InteractiveViewer(
-          minScale: 0.1,
-          maxScale: 5.0,
-          constrained: false, // Allows the child to be larger than the screen
-          boundaryMargin: const EdgeInsets.all(100),
-          child: Container(
-            width: 2400, // Standard large poster width
-            height: 1600, // Standard large poster height
-            color: Colors.white,
-            padding: const EdgeInsets.all(48.0),
-            child: Column(
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 48),
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Left Column (Abstract, Intro, Methods)
-                      Expanded(child: _buildLeftColumn()),
-                      const SizedBox(width: 48),
-                      // Middle Column (Results, Charts) - Made wider for emphasis
-                      Expanded(flex: 2, child: _buildMiddleColumn()),
-                      const SizedBox(width: 48),
-                      // Right Column (Discussion, Conclusion, Refs)
-                      Expanded(child: _buildRightColumn()),
-                    ],
+      backgroundColor: Colors.grey[900], // Dark background like a projector screen
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top Bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Research Presentation Deck',
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(48),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0D47A1), // Deep blue header
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          // Left Logo Placeholder
-          Container(
-            width: 180,
-            height: 180,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(Icons.school, size: 100, color: Color(0xFF0D47A1)),
-            ),
-          ),
-          const SizedBox(width: 64),
-          // Title and Authors
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  'Title of the Research Project Goes Here',
-                  style: TextStyle(
-                    fontSize: 72, 
-                    fontWeight: FontWeight.bold, 
-                    color: Colors.white,
-                    letterSpacing: 1.2,
+                  Text(
+                    'Slide ${_currentPage + 1} of $_totalPages',
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'Author One, Author Two, Author Three',
-                  style: TextStyle(
-                    fontSize: 36, 
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Department of Computer Science, University of Technology',
-                  style: TextStyle(
-                    fontSize: 28, 
-                    color: Colors.white.withOpacity(0.8),
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 64),
-          // Right Logo Placeholder
-          Container(
-            width: 180,
-            height: 180,
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-            ),
-            child: const Center(
-              child: Icon(Icons.science, size: 100, color: Color(0xFF0D47A1)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLeftColumn() {
-    return Column(
-      children: [
-        _buildSection(
-          'Abstract', 
-          'This is the abstract section. It provides a brief summary of the research, including the problem statement, methodology, results, and conclusion. Keep it concise and engaging to draw readers in.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
-        ),
-        const SizedBox(height: 40),
-        _buildSection(
-          'Introduction', 
-          'The introduction sets the context for the research. It explains the background, the significance of the problem, and the objectives of the study.\n\nKey Objectives:\n1. First primary objective of the study\n2. Second supporting objective\n3. Third exploratory objective\n\nDuis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.'
-        ),
-        const SizedBox(height: 40),
-        _buildSection(
-          'Methodology', 
-          'Describe the methods used to conduct the research. This might include experimental design, data collection procedures, and analytical techniques.\n\n• Data Source A: 10,000 samples\n• Data Source B: Qualitative interviews\n• Statistical Analysis: ANOVA and Regression models\n\nExcepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMiddleColumn() {
-    return Column(
-      children: [
-        _buildSection(
-          'Results & Findings', 
-          'Present the main findings of your research here. Use charts, graphs, and images to make the data easy to understand at a glance. The visual hierarchy should draw the eye to the most important data first.', 
-          isLarge: true
-        ),
-        const SizedBox(height: 40),
-        // Large Primary Chart Placeholder
-        Expanded(
-          flex: 3,
-          child: Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.grey[300]!, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.bar_chart, size: 250, color: Colors.blue[400]),
-                const SizedBox(height: 32),
-                Text(
-                  'Figure 1: Primary Data Visualization showing significant trends', 
-                  style: TextStyle(fontSize: 24, color: Colors.grey[700], fontStyle: FontStyle.italic)
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 40),
-        // Secondary Charts Row
-        Expanded(
-          flex: 2,
-          child: Row(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.grey[300]!, width: 2),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.pie_chart, size: 150, color: Colors.green[400]),
-                      const SizedBox(height: 16),
-                      Text('Fig 2: Distribution', style: TextStyle(fontSize: 20, color: Colors.grey[700])),
-                    ],
+            
+            // Presentation Area (16:9 Aspect Ratio)
+            Expanded(
+              child: Center(
+                child: AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Container(
+                    margin: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        )
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: (int page) {
+                          setState(() {
+                            _currentPage = page;
+                          });
+                        },
+                        children: [
+                          _buildTitleSlide(),
+                          _buildContentSlide(
+                            title: '1. Introduction & Abstract',
+                            content: '• Provide the background of the research here.\n\n• State the primary problem or hypothesis.\n\n• Explain why this research is significant to the field.\n\n• (Please share your guidelines so I can insert the exact text!)',
+                            icon: Icons.lightbulb_outline,
+                          ),
+                          _buildContentSlide(
+                            title: '2. Methodology',
+                            content: '• Detail the research design and approach.\n\n• Describe the data collection methods (e.g., surveys, experiments, literature review).\n\n• Outline the analytical techniques used to process the data.',
+                            icon: Icons.science_outlined,
+                          ),
+                          _buildVisualSlide(
+                            title: '3. Results & Findings',
+                            subtitle: 'Key Data Visualizations',
+                          ),
+                          _buildContentSlide(
+                            title: '4. Conclusion & Next Steps',
+                            content: '• Summarize the core findings of the study.\n\n• Discuss the implications of these results.\n\n• Suggest areas for future research and development.\n\n• Open the floor for Questions & Answers.',
+                            icon: Icons.check_circle_outline,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(width: 40),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.grey[300]!, width: 2),
+            ),
+            
+            // Bottom Controls
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _currentPage > 0 ? _prevPage : null,
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text('Previous'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.show_chart, size: 150, color: Colors.red[400]),
-                      const SizedBox(height: 16),
-                      Text('Fig 3: Growth Rate', style: TextStyle(fontSize: 20, color: Colors.grey[700])),
-                    ],
+                  const SizedBox(width: 32),
+                  ElevatedButton.icon(
+                    onPressed: _currentPage < _totalPages - 1 ? _nextPage : null,
+                    icon: const Icon(Icons.arrow_forward),
+                    label: const Text('Next'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    ),
                   ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitleSlide() {
+    return Padding(
+      padding: const EdgeInsets.all(64.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const Icon(Icons.school, size: 80, color: Color(0xFF1565C0)),
+          const SizedBox(height: 32),
+          const Text(
+            'Research Project Title',
+            style: TextStyle(
+              fontSize: 56,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D47A1),
+              letterSpacing: 1.2,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Container(height: 4, width: 100, color: Colors.orange),
+          const SizedBox(height: 24),
+          const Text(
+            'Author Name(s)',
+            style: TextStyle(
+              fontSize: 32,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Department / Institution Name\nDate of Presentation',
+            style: TextStyle(
+              fontSize: 24,
+              color: Colors.black54,
+              fontStyle: FontStyle.italic,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentSlide({required String title, required String content, required IconData icon}) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 48, color: const Color(0xFF1565C0)),
+              const SizedBox(width: 24),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF0D47A1),
                 ),
               ),
             ],
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRightColumn() {
-    return Column(
-      children: [
-        _buildSection(
-          'Discussion', 
-          'Interpret the results and explain their significance. How do they compare to previous research? What are the implications?\n\nOur findings suggest that the initial hypothesis was correct, demonstrating a strong correlation between the variables tested. This aligns with previous literature while offering new insights into edge cases.'
-        ),
-        const SizedBox(height: 40),
-        _buildSection(
-          'Conclusion', 
-          'Summarize the main takeaways from the research. What are the next steps or future directions for this work?\n\nIn conclusion, this study provides a robust framework for understanding the phenomenon. Future research should focus on longitudinal studies to verify these results over time.'
-        ),
-        const SizedBox(height: 40),
-        _buildSection(
-          'References', 
-          '[1] Smith, J. et al. (2023). Advanced methodologies in modern research. Journal of Science, 45(2), 112-125.\n\n[2] Doe, A. (2022). Comprehensive data analysis techniques. Academic Press.\n\n[3] Johnson, M. (2023). A review of recent literature. Annual Conference Proceedings, 89-104.', 
-          isSmall: true
-        ),
-        const SizedBox(height: 40),
-        _buildSection(
-          'Acknowledgements', 
-          'We would like to thank the National Science Foundation for funding this research (Grant #12345). Special thanks to the university lab staff for their technical support.', 
-          isSmall: true
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSection(String title, String content, {bool isLarge = false, bool isSmall = false}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+          const SizedBox(height: 16),
+          const Divider(thickness: 2),
+          const SizedBox(height: 32),
+          Expanded(
+            child: Text(
+              content,
+              style: const TextStyle(
+                fontSize: 28,
+                height: 1.8,
+                color: Colors.black87,
+              ),
+            ),
           ),
         ],
-        border: Border.all(color: Colors.blue[100]!, width: 2),
       ),
+    );
+  }
+
+  Widget _buildVisualSlide({required String title, required String subtitle}) {
+    return Padding(
+      padding: const EdgeInsets.all(48.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
-            style: TextStyle(
-              fontSize: isLarge ? 48 : 36,
+            style: const TextStyle(
+              fontSize: 40,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF0D47A1),
+              color: Color(0xFF0D47A1),
             ),
           ),
           const SizedBox(height: 16),
-          Container(
-            height: 4,
-            width: 80,
-            color: Colors.orange[400], // Accent color for dividers
-          ),
+          const Divider(thickness: 2),
           const SizedBox(height: 24),
-          Text(
-            content,
-            style: TextStyle(
-              fontSize: isSmall ? 20 : 26,
-              height: 1.6,
-              color: Colors.black87,
+          Expanded(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.blue[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.blue[200]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.bar_chart, size: 120, color: Colors.blue[700]),
+                        const SizedBox(height: 16),
+                        Text('Data Chart 1', style: TextStyle(fontSize: 24, color: Colors.blue[900])),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 32),
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.green[200]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.pie_chart, size: 120, color: Colors.green[700]),
+                        const SizedBox(height: 16),
+                        Text('Data Chart 2', style: TextStyle(fontSize: 24, color: Colors.green[900])),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
+          const SizedBox(height: 24),
+          Center(
+            child: Text(
+              subtitle,
+              style: const TextStyle(fontSize: 20, fontStyle: FontStyle.italic, color: Colors.black54),
+            ),
+          )
         ],
       ),
     );
